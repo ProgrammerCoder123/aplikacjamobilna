@@ -5,12 +5,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/core';
 import LoginScreen from './LoginScreen';
+import SignUpScreen from './SignUpScreen';
 
 
 
 export type RootStackParamList = {
   Main: undefined;
   LoginScreen: undefined;
+  SignUpScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -26,6 +28,7 @@ const App = () => {
     }}}>
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -38,11 +41,10 @@ const MainScreen = () => {
 
   const handleLoginPress = () => {
     navigation.navigate('LoginScreen');
-    console.log('Zaloguj');
   };
 
   const handleRegisterPress = () => {
-    console.log('Zarejestruj');
+    navigation.navigate('SignUpScreen');
   };
 
   const handleExitPress = () => {

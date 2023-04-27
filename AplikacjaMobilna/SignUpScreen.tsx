@@ -5,13 +5,14 @@ import { RootStackParamList } from './App';
 import { sha256, sha256Bytes } from 'react-native-sha256';
 
 
-type NewScreenRouteProp = RouteProp<RootStackParamList, 'LoginScreen'>;
+type NewScreenRouteProp = RouteProp<RootStackParamList, 'SignUpScreen'>;
 
-const LoginScreen = () => {
+const SignUpScreen = () => {
   const { params } = useRoute<NewScreenRouteProp>();
 
   const [loginText, onChangeLoginText] = React.useState('');
   const [passwordText, onChangePasswordText] = React.useState('');
+  const [confirmPasswordText, onChangeConfirmPasswordText] = React.useState('');
 
   var hashedPassword:string = "";
 
@@ -33,11 +34,11 @@ const LoginScreen = () => {
     ]);
 
 
-  const handleLoginPress = () => {
+  const handleSignUpPress = () => {
     console.log('Zaloguj');
 
 
-    if(loginText == "" || passwordText == "") {
+    if(loginText == "" || passwordText == "" || confirmPasswordText == "") {
       notAllData();
       return
     }
@@ -45,11 +46,6 @@ const LoginScreen = () => {
     sha256(passwordText).then( hash => {
       hashedPassword = hash;
     });
-
-
-
-
-
 
   };
 
@@ -71,11 +67,18 @@ const LoginScreen = () => {
           onChangeText={onChangePasswordText}
           value={passwordText}
         />
+        <Text style={styles.textBars}>Potwierdź hasło</Text>
+        <TextInput
+          secureTextEntry={true}
+          style={styles.input}
+          onChangeText={onChangeConfirmPasswordText}
+          value={confirmPasswordText}
+        />
       </View>
       <TouchableOpacity
         style={[styles.button, { backgroundColor: '#0277BD', marginTop: 20,}]}
-        onPress={handleLoginPress}>
-        <Text style={styles.buttonText}>Zaloguj</Text>
+        onPress={handleSignUpPress}>
+        <Text style={styles.buttonText}>Zarejestruj</Text>
       </TouchableOpacity>
     </View>
   );
@@ -95,7 +98,7 @@ const styles = StyleSheet.create({
   card: {
     padding: 5,
     width: 300,
-    height: 200,
+    height: 270,
     elevation: 4,
     backgroundColor: 'white',
     justifyContent: 'flex-start',
@@ -128,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignUpScreen;
