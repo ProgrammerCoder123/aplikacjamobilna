@@ -10,7 +10,7 @@ import LoginScreen from './LoginScreen';
 
 export type RootStackParamList = {
   Main: undefined;
-  LoginScreen: { message: string };
+  LoginScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -21,7 +21,9 @@ const App = () => {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName="Main" screenOptions={{headerTitle: '', headerStyle: {
+      backgroundColor: '#42A5F5',
+    }}}>
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
       </Stack.Navigator>
@@ -34,13 +36,8 @@ const MainScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [message, setMessage] = useState('');
 
-  const handleButtonPress = () => {
-    navigation.navigate('LoginScreen', { message: 'Hello, world!' });
-  };
-
-
   const handleLoginPress = () => {
-    navigation.navigate('LoginScreen', { message: 'Hello, world!' });
+    navigation.navigate('LoginScreen');
     console.log('Zaloguj');
   };
 
@@ -54,19 +51,23 @@ const MainScreen = () => {
 
 
   return (
+    
     <View style={styles.container}>
+
+      <Text style={{fontSize: 40, marginBottom: 50,}}>Aplikacja notatnikowa</Text>
+     
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: 'blue' }]}
+        style={[styles.button, { backgroundColor: '#0277BD' }]}
         onPress={handleLoginPress}>
         <Text style={styles.buttonText}>Zaloguj</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: 'green' }]}
+        style={[styles.button, { backgroundColor: '#0277BD' }]}
         onPress={handleRegisterPress}>
         <Text style={styles.buttonText}>Zarejestruj</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: 'red' }]}
+        style={[styles.button, { backgroundColor: '#D32F2F' }]}
         onPress={handleExitPress}>
         <Text style={styles.buttonText}>Zamknij aplikację</Text>
       </TouchableOpacity>
@@ -86,13 +87,15 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 20,
-    
+    elevation: 4,    
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 25,
+    margin: 10,
+    fontSize: 20,
+   
   },
 });
 
