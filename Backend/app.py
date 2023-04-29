@@ -1,5 +1,6 @@
 import random
 import datetime
+import time
 from flask import Flask, request
 from sqlalchemy import create_engine, text
 from flask_sqlalchemy import SQLAlchemy
@@ -26,18 +27,14 @@ CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_SERVER_ADDRESS}:{DATABASE_SERVER_PORT}/{DATABASE_DATABASE_NAME}"
 
-#db = SQLAlchemy(app)
-#migrate = Migrate(app, db)
-
 engine = create_engine(f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_SERVER_ADDRESS}:{DATABASE_SERVER_PORT}/{DATABASE_DATABASE_NAME}")
-
 
 
 @app.route('/api/signupuser', methods = ['POST'])
 def postSignUpUser():
 
-    givenUserLogin = request.form['user_login']
-    givenUserPassword = request.form['user_password']
+    givenUserLogin = request.json['user_login']
+    givenUserPassword = request.json['user_password']
 
     with engine.begin() as connection:
         result = connection.execute(text(f"SELECT * FROM user_data WHERE user_login = '{givenUserLogin}'")).all()
@@ -47,34 +44,43 @@ def postSignUpUser():
                 'isRegistered' : "No",
                 'reason' : "REASON_USER_LOGIN_TAKEN"
             })
-            response.headers.add("Access-Control-Allow-Origin", "*") 
+            response.headers.add("Content-Type", "application/json") 
             return response
     
 
-        connection.execute(text(f"INSERT INTO user_data (user_login, user_password) VALUES('{givenUserLogin}', '{givenUserPassword}')"))
+        connection.execute(text(f"INSERT INTO public.user_data (user_login, user_password) VALUES('{givenUserLogin}', '{givenUserPassword}')"))
+
+        result = connection.execute(text(f"SELECT * FROM user_data WHERE user_login = '{givenUserLogin}'")).all()
+        userFound = result[0]
 
         response = jsonify ({
                 'isRegistered' : "Yes",
+                'id' : userFound[0],
             })
-        response.headers.add("Access-Control-Allow-Origin", "*") 
+        response.headers.add("Content-Type", "application/json") 
         return response
 
 
 @app.route('/api/loginuser', methods = ['POST'])
 def postLoginUser():
 
-    givenUserLogin = request.form['user_login']
-    givenUserPassword = request.form['user_password']
+    givenUserLogin = request.json['user_login']
+    givenUserPassword = request.json['user_password']
+
+    print(givenUserPassword)
 
     with engine.begin() as connection:
 
-        result = connection.execute(text(f"SELECT * FROM user_data WHERE user_login = '{givenUserLogin}' AND user_password = '{givenUserPassword}'"))
+        result = connection.execute(text(f"SELECT * FROM user_data WHERE user_login = '{givenUserLogin}' AND user_password = '{givenUserPassword}'")).all()
+
+        userFound = result[0]
 
         if len(result) > 0:
             response = jsonify ({
                 'login' : "Yes",
+                'id' : userFound[0],
             })
-            response.headers.add("Access-Control-Allow-Origin", "*") 
+            response.headers.add("Content-Type", "application/json")
             return response
         
         
@@ -82,13 +88,22 @@ def postLoginUser():
                 'login' : "No",
                 'reason' : "REASON_USER_LOGIN_INCORRECT_DATA"
             })
-        response.headers.add("Access-Control-Allow-Origin", "*") 
+        response.headers.add("Content-Type", "application/json") 
         return response
 
+@app.route('/', methods = ['POST'])
+def postHome():
+ 
+    response = jsonify ({
+        'time': time.time(),
+        'time2': time.time(),
+    })
+    response.headers.add("Content-Type", "application/json") 
+    return response
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0')
 
 
 

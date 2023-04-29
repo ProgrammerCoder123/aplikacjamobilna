@@ -25,6 +25,22 @@ const SignUpScreen = () => {
       },
     ]);
 
+    const loginIsTaken = () =>
+    Alert.alert('Uwaga', 'Podany login jest zajęty', [
+      {
+        text: 'Zamknij',
+        style: 'cancel',
+      },
+    ]);
+
+  const passwordsDontMatch = () =>
+    Alert.alert('Uwaga', 'Hasła nie są identyczne', [
+      {
+        text: 'Zamknij',
+        style: 'cancel',
+      },
+    ]);
+
   const notAllData = () =>
     Alert.alert('Uwaga', 'Nie wprowadzono wszystkich wymaganych danych!', [
       {
@@ -34,18 +50,53 @@ const SignUpScreen = () => {
     ]);
 
 
-  const handleSignUpPress = () => {
-    console.log('Zaloguj');
+  const handleSignUpPress = async () => {
 
+    
 
     if(loginText == "" || passwordText == "" || confirmPasswordText == "") {
       notAllData();
       return
     }
 
-    sha256(passwordText).then( hash => {
+    if(passwordText != confirmPasswordText) {
+      passwordsDontMatch();
+      return;
+    }
+
+    await sha256(passwordText).then( hash => {
       hashedPassword = hash;
     });
+
+    const response = await fetch(
+      'http://192.168.18.4:5000/api/signupuser',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'user_login': loginText,
+          'user_password': hashedPassword,
+        }),
+      }
+    );
+    const json = await response.json();
+    
+    console.log(json);
+    
+    if(json.isRegistered == "No") {
+      loginIsTaken();
+    }
+
+
+
+
+
+
+
+
 
   };
 

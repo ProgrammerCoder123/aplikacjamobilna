@@ -15,7 +15,6 @@ const LoginScreen = () => {
 
   var hashedPassword:string = "";
 
-
   const incorrectDataAlert = () =>
     Alert.alert('Uwaga', 'Wprowadzono nieprawidłowe dane', [
       {
@@ -31,9 +30,10 @@ const LoginScreen = () => {
         style: 'cancel',
       },
     ]);
+    
 
 
-  const handleLoginPress = () => {
+  const handleLoginPress = async () => {
     console.log('Zaloguj');
 
 
@@ -47,6 +47,27 @@ const LoginScreen = () => {
     });
 
 
+    const response = await fetch(
+      'http://192.168.18.4:5000/api/loginuser',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'user_login': loginText,
+          'user_password': hashedPassword,
+        }),
+      }
+    );
+    const json = await response.json();
+
+    if(json.login == "No") {
+      incorrectDataAlert();
+    } else {
+      
+    }
 
 
 
