@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity, Alert} from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from './App';
 import { sha256, sha256Bytes } from 'react-native-sha256';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 type NewScreenRouteProp = RouteProp<RootStackParamList, 'LoginScreen'>;
 
 const LoginScreen = () => {
+
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const [message, setMessage] = useState('');
+
+
   const { params } = useRoute<NewScreenRouteProp>();
 
   const [loginText, onChangeLoginText] = React.useState('');
@@ -42,7 +48,7 @@ const LoginScreen = () => {
       return
     }
 
-    sha256(passwordText).then( hash => {
+    await sha256(passwordText).then( hash => {
       hashedPassword = hash;
     });
 
@@ -62,11 +68,13 @@ const LoginScreen = () => {
       }
     );
     const json = await response.json();
+    
+    console.log(json);
 
     if(json.login == "No") {
       incorrectDataAlert();
     } else {
-      
+      navigation.navigate('DashboardScreen', {id: json.id, login: json.login});
     }
 
 

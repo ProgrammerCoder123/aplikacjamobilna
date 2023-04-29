@@ -56,7 +56,76 @@ def postSignUpUser():
         response = jsonify ({
                 'isRegistered' : "Yes",
                 'id' : userFound[0],
+                'login': userFound[1],
             })
+        response.headers.add("Content-Type", "application/json") 
+        return response
+    
+
+@app.route('/api/notes/publish', methods = ['POST'])
+def postNotesPublish():
+
+    givenUserLogin = request.json['user_login']
+    givenNoteTitle = request.json['note_title']
+    givenNoteNote = request.json['note_note']
+
+    with engine.begin() as connection:
+        
+        connection.execute(text(f"INSERT INTO public.user_notes (user_login, note_title, note_note) VALUES('{givenUserLogin}', '{givenNoteTitle}', '{givenNoteNote}')"))
+
+        response = jsonify ({
+                'isPublished' : "Yes",
+            })
+        response.headers.add("Content-Type", "application/json") 
+        return response
+
+
+
+class Notes:
+
+    def __init__(self, id, userLogin, noteTitle, noteNote) -> None:
+        self.id = id
+        self.userLogin = userLogin
+        self.noteTitle = noteTitle
+        self.noteNote = noteNote
+
+    def toDict(self):
+        return self.__dict__
+
+
+
+
+
+@app.route('/api/notes/get', methods = ['POST'])
+def postNotesGet():
+
+    givenUserLogin = request.json['user_login']
+
+    with engine.begin() as connection:
+        
+        result = connection.execute(text(f"SELECT * FROM user_notes WHERE user_login = '{givenUserLogin}'")).all()
+
+        print("Tu 1: " + f"SELECT * FROM user_notes WHERE user_login = '{givenUserLogin}'")
+
+        if len(result) > 0:
+
+            notes = []
+
+            for r in result:
+                notes.append(Notes(r[0], r[1], r[2], r[3]))
+
+            response = jsonify ({
+                    'foundNotes' : "Yes",
+                    'notes' : [n.toDict() for n in notes],
+                })
+            
+
+            response.headers.add("Content-Type", "application/json") 
+            return response
+        
+        response = jsonify ({
+                    'foundNotes' : "No",
+                })
         response.headers.add("Content-Type", "application/json") 
         return response
 
@@ -67,18 +136,19 @@ def postLoginUser():
     givenUserLogin = request.json['user_login']
     givenUserPassword = request.json['user_password']
 
-    print(givenUserPassword)
-
     with engine.begin() as connection:
 
         result = connection.execute(text(f"SELECT * FROM user_data WHERE user_login = '{givenUserLogin}' AND user_password = '{givenUserPassword}'")).all()
 
-        userFound = result[0]
 
         if len(result) > 0:
+
+            userFound = result[0]
+
             response = jsonify ({
                 'login' : "Yes",
                 'id' : userFound[0],
+                'login': userFound[1],
             })
             response.headers.add("Content-Type", "application/json")
             return response

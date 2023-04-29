@@ -6,6 +6,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/core';
 import LoginScreen from './LoginScreen';
 import SignUpScreen from './SignUpScreen';
+import DashboardScreen from './DashboardScreen';
+import NoteScreen from './NoteScreen';
+import { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 
 
 
@@ -13,6 +16,8 @@ export type RootStackParamList = {
   Main: undefined;
   LoginScreen: undefined;
   SignUpScreen: undefined;
+  DashboardScreen: {id:Int32, login:string};
+  NoteScreen: {id:Int32, login:string, noteType:string, noteID:Int32};
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -29,6 +34,8 @@ const App = () => {
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen options={{headerShown: false}} name="DashboardScreen" component={DashboardScreen} />
+        <Stack.Screen name="NoteScreen" component={NoteScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
