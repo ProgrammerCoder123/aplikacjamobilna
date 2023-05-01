@@ -139,6 +139,23 @@ def postNotesDelete():
         return response
 
 
+@app.route('/api/notes/edit', methods = ['POST'])
+def postNotesEdit():
+
+    givenNoteID = request.json['noteID']
+    givenNoteTitle = request.json['noteTitle']
+    givenNoteNote = request.json['noteNote']
+
+    with engine.begin() as connection:
+        
+        connection.execute(text(f"UPDATE public.user_notes SET note_title = '{givenNoteTitle}', note_note = '{givenNoteNote}' WHERE id = {givenNoteID}"))
+
+        response = jsonify ({
+                'Edited' : "Yes",
+            })
+        response.headers.add("Content-Type", "application/json") 
+        return response
+
 
 
 @app.route('/api/loginuser', methods = ['POST'])

@@ -40,8 +40,6 @@ const LoginScreen = () => {
 
 
   const handleLoginPress = async () => {
-    console.log('Zaloguj');
-
 
     if(loginText == "" || passwordText == "") {
       notAllData();

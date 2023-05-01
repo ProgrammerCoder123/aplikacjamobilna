@@ -99,25 +99,21 @@ const DashboardScreen = () => {
       );
       const json = await response.json();
       
-      
-      console.log(json.notes);
-      console.log(json.notes.length);
-      console.log(json.notes[0]);
-      console.log(json.notes[0]['noteTitle']);
-  
+      if(json.notes != undefined) {
 
-      for (let i = 0; i < json.notes.length; i++) {
+        for (let i = 0; i < json.notes.length; i++) {
 
-        var tmpItem:ItemData = {
-          noteID: json.notes[i]['id'],
-          noteOwner: json.notes[i]['userLogin'],
-          noteTitle: json.notes[i]['noteTitle'],
-          noteNote: json.notes[i]['noteNote'],
+          var tmpItem:ItemData = {
+            noteID: json.notes[i]['id'],
+            noteOwner: json.notes[i]['userLogin'],
+            noteTitle: json.notes[i]['noteTitle'],
+            noteNote: json.notes[i]['noteNote'],
+          }
+
+          arrayData.push(tmpItem);
         }
 
-        arrayData.push(tmpItem);
       }
-
 
   
     };
@@ -133,7 +129,7 @@ const DashboardScreen = () => {
       return (
         <Item
           item={item}
-          onPressEdit={() => handleNotatkaEdit}
+          onPressEdit={() => handleNotatkaEdit(item.noteID, item.noteTitle, item.noteNote)}
           onPressDelete={() => handleNotatkaDelete(item.noteID)}
         />
       );
@@ -142,8 +138,8 @@ const DashboardScreen = () => {
 
 
 
-    const handleNotatkaEdit = async () => {
-      
+    const handleNotatkaEdit = async (noteID:Int32, noteTitle:string, noteNote:string) => {
+      navigation.navigate('NoteScreen', {id: params.id, login: params.login, noteType:"EDYTUJ", noteID:noteID, noteTitle:noteTitle, noteNote:noteNote});
     };
     const handleNotatkaDelete = async (noteID:Int32) => {
       Alert.alert(
@@ -190,7 +186,7 @@ const DashboardScreen = () => {
 
 
     const handleDodajNotatkePress = async () => {
-      navigation.navigate('NoteScreen', {id: params.id, login: params.login, noteType:"DODAJ", noteID:0});
+      navigation.navigate('NoteScreen', {id: params.id, login: params.login, noteType:"DODAJ", noteID:0, noteTitle:"", noteNote:""});
     };
 
     function handleBackButtonClick() {

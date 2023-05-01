@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BackHandler, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationContainer} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -17,7 +17,7 @@ export type RootStackParamList = {
   LoginScreen: undefined;
   SignUpScreen: undefined;
   DashboardScreen: {id:Int32, login:string};
-  NoteScreen: {id:Int32, login:string, noteType:string, noteID:Int32};
+  NoteScreen: {id:Int32, login:string, noteType:string, noteID:Int32, noteTitle:string, noteNote:string};
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -55,7 +55,7 @@ const MainScreen = () => {
   };
 
   const handleExitPress = () => {
-    console.log('Zamknij aplikację');
+    BackHandler.exitApp();
   };
 
 

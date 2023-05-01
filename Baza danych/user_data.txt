@@ -1,0 +1,6 @@
+CREATE TABLE public.user_data
+(
+    id SERIAL NOT NULL,
+    user_login text NOT NULL,
+    user_password text NOT NULL,
+)

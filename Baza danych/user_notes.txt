@@ -1,0 +1,7 @@
+CREATE TABLE public.user_notes
+(
+    id SERIAL NOT NULL,
+    user_login text NOT NULL,
+    note_title text,
+    note_note text,
+)

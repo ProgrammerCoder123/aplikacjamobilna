@@ -13,15 +13,26 @@ const NoteScreen = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const { params } = useRoute<NewScreenRouteProp>();
 
-    const [noteText, onChangeNoteText] = React.useState('');
-    const [titleText, onChangeTitleText] = React.useState('');
 
+
+    var tmpNoteTitle:string = "";
+    var tmpNoteNote:string = "";
 
     var buttonText:string = "";
 
     if(params.noteType == "DODAJ") {
-        buttonText = "Zapisz notatkę"
+        buttonText = "Zapisz notatkę";
+    } else if(params.noteType == "EDYTUJ") {
+      buttonText = "Zapisz notatkę";
+      tmpNoteTitle = params.noteTitle;
+      tmpNoteNote = params.noteNote;
     }
+
+    const [noteText, onChangeNoteText] = React.useState(tmpNoteNote);
+    const [titleText, onChangeTitleText] = React.useState(tmpNoteTitle);
+
+
+    
 
 
   
@@ -49,8 +60,30 @@ const NoteScreen = () => {
             return;
         }
 
-        const response = await fetch(
-            'http://192.168.18.4:5000/api/notes/publish',
+
+        if(params.noteType == "DODAJ") {
+
+          const response = await fetch(
+              'http://192.168.18.4:5000/api/notes/publish',
+              {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  'user_login': params.login,
+                  'note_title': titleText,
+                  'note_note': noteText,
+                }),
+              }
+            );
+          const json = await response.json();
+
+        } else if(params.noteType == "EDYTUJ") {
+          
+          const response = await fetch(
+            'http://192.168.18.4:5000/api/notes/edit',
             {
               method: 'POST',
               headers: {
@@ -58,26 +91,25 @@ const NoteScreen = () => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                'user_login': params.login,
-                'note_title': titleText,
-                'note_note': noteText,
+                'noteID': params.noteID,
+                'noteTitle': titleText,
+                'noteNote': noteText,
               }),
             }
           );
           const json = await response.json();
 
+        }
 
-          //navigation.goBack();
 
           
-
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 1,
-              routes: [
-                { name: 'DashboardScreen', params: {id: params.id, login: params.login}},
-              ],
-            }));
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [
+              { name: 'DashboardScreen', params: {id: params.id, login: params.login}},
+            ],
+          }));
     
       };
 
