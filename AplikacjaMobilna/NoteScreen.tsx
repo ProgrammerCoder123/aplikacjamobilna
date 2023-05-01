@@ -67,7 +67,17 @@ const NoteScreen = () => {
           const json = await response.json();
 
 
-          navigation.goBack();
+          //navigation.goBack();
+
+          
+
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [
+                { name: 'DashboardScreen', params: {id: params.id, login: params.login}},
+              ],
+            }));
     
       };
 

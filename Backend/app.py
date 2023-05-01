@@ -62,6 +62,17 @@ def postSignUpUser():
         return response
     
 
+class Notes:
+
+    def __init__(self, id, userLogin, noteTitle, noteNote) -> None:
+        self.id = id
+        self.userLogin = userLogin
+        self.noteTitle = noteTitle
+        self.noteNote = noteNote
+
+    def toDict(self):
+        return self.__dict__
+
 @app.route('/api/notes/publish', methods = ['POST'])
 def postNotesPublish():
 
@@ -78,23 +89,7 @@ def postNotesPublish():
             })
         response.headers.add("Content-Type", "application/json") 
         return response
-
-
-
-class Notes:
-
-    def __init__(self, id, userLogin, noteTitle, noteNote) -> None:
-        self.id = id
-        self.userLogin = userLogin
-        self.noteTitle = noteTitle
-        self.noteNote = noteNote
-
-    def toDict(self):
-        return self.__dict__
-
-
-
-
+    
 
 @app.route('/api/notes/get', methods = ['POST'])
 def postNotesGet():
@@ -104,8 +99,6 @@ def postNotesGet():
     with engine.begin() as connection:
         
         result = connection.execute(text(f"SELECT * FROM user_notes WHERE user_login = '{givenUserLogin}'")).all()
-
-        print("Tu 1: " + f"SELECT * FROM user_notes WHERE user_login = '{givenUserLogin}'")
 
         if len(result) > 0:
 
@@ -128,6 +121,24 @@ def postNotesGet():
                 })
         response.headers.add("Content-Type", "application/json") 
         return response
+    
+
+@app.route('/api/notes/delete', methods = ['POST'])
+def postNotesDelete():
+
+    givenNoteID = request.json['noteID']
+
+    with engine.begin() as connection:
+        
+        connection.execute(text(f"DELETE FROM public.user_notes WHERE id = {givenNoteID}"))
+
+        response = jsonify ({
+                'Deleted' : "Yes",
+            })
+        response.headers.add("Content-Type", "application/json") 
+        return response
+
+
 
 
 @app.route('/api/loginuser', methods = ['POST'])
